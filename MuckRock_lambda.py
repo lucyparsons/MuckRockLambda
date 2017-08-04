@@ -8,12 +8,11 @@ username = os.environ['my_username']
 passphrase = os.environ['my_passphrase']
 api_url = 'https://www.muckrock.com/api_v1/'
 
-
 response = requests.post('https://www.muckrock.com/api_v1/token-auth/',
                          data={'username': username, 'password': passphrase })
 data = response.json()
 token = data['token']
-:print('Token received from MR successfully')
+print('Token received from MR successfully')
 
 
 def get_headers(token=None):
