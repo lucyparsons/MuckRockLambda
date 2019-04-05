@@ -1,8 +1,8 @@
 import json
 import requests
 from datetime import datetime
-import dateutil.relativedelta
-import os 
+from dateutil.relativedelta import relativedelta
+import os
 
 username = os.environ['my_username']
 passphrase = os.environ['my_passphrase']
@@ -25,27 +25,22 @@ def get_headers(token=None):
         return {'content-type': 'application/json'}
 
 
-def lambda_handler(event, context): 
+def lambda_handler(event, context):
     print("Received event")
     # first get today's month then subtract one month to grab previous
-
-    s = str(datetime.now())[0:10]
-    d = datetime.strptime(s, "%Y-%m-%d")
-    d2 = d - dateutil.relativedelta.relativedelta(months=1)
-    # strip day of the week + other timedate objects
-    d2 = str(d2)[0:7]
-
+    one_month_ago = datetime.now() - relativedelta(months=1)
+    year_month = one_month_ago.strftime("%Y-%m")
     # use test agencies from MuckRock
     foia_doc = json.dumps({
         'jurisdiction': 10,
         'agency': 248,
         'title': 'Last Month\'s 1505 checks',
         'document_request':
-            'For the year and month of ' + d2 +
+            'For the year and month of ' + year_month +
             ', I am requesting a list of all 1505 checks expenditures issues by the Bureau of Organized Crime. '
-            'I am requesting the full list of checks spent by the BoC during the full month of ' + d2 + '. ',
+            'I am requesting the full list of checks spent by the BoC during the full month of ' + year_month + '. ',
         })
-                                                                                                                        
+
     header = get_headers(token)
     foia_url = api_url+'foia/'
     r = requests.post(foia_url, data=foia_doc, headers=header)
